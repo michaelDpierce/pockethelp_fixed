@@ -1,5 +1,74 @@
-<ion-view title='Help'>
+<ion-view title='PocketHelp'>
   <ion-content has-header='true' has-tabs='true' padding='true'>
-    Help
+    <h5>Send To</h5>
+    <div class='list'>
+      <div class='item'>
+        <span style='color: #696969;'>Dad</span>
+        <a style='float: right; color: #11C1F3;' href='#'><i class='fa fa-plus-square-o fa-lg'></i></a>
+      </div>
+      <div class='item'>
+        <span style='color: #696969;'>Mom</span>
+        <a style='float: right; color: #11C1F3;' href='#'><i class='fa fa-plus-square-o fa-lg'></i></a>
+      </div>
+      <div class='item'>
+        <span style='color: #696969;'>Brother</span>
+        <a style='float: right; color: #11C1F3;' href='#'><i class='fa fa-plus-square-o fa-lg'></i></a>
+      </div>
+    </div>
+    <button class='button button-full button-calm'>
+      Request All
+    </button>
+
+    <h5>Issue</h5>
+    <div class='list'>
+      <label class='item item-input'>
+        <input ng-model='help.issue' type='text' placeholder='Issue'>
+      </label>
+    </div>
+
+    <h5>Emergency Status</h5>
+
+    <div class="row">
+      <div class="col col-33">
+        <button class='button button-full' ng-class="{'button-calm': selected.one}"
+                ng-click="selected.one = true; selected.two = false; selected.three = false; help.level = 'Level I'">
+          Level I
+        </button>
+      </div>
+      <div class="col col-33">
+            <button class='button button-full' ng-class="{'button-calm': selected.two}"
+            ng-click="selected.one = false; selected.two = true; selected.three = false; help.level = 'Level II'">
+      Level II
+    </button>
+      </div>
+      <div class="col col-33">
+            <button class='button button-full' ng-class="{'button-calm': selected.three}"
+            ng-click="selected.one = false; selected.two = false; selected.three = true; help.level = 'Level III'">
+      Level III
+    </button>
+      </div>
+    </div>
+
+
+
+
+
+
+    <br>
+    <ul class='list'>
+      <li class='item item-toggle'>
+         Send Location
+         <label class='toggle toggle-royal'>
+           <input type='checkbox' ng-click='currentLocation()'>
+           <div class='track'>
+             <div class='handle'></div>
+           </div>
+         </label>
+      </li>
+    </ul>
+    <div ng-show='showMap' id='map-one' class='map'> </div>
+    <button class='button button-full button-royal' ng-click='requestHelp(help)'>
+      REQUEST HELP
+    </button>
   </ion-content>
 </ion-view>

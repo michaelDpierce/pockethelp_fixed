@@ -42,6 +42,50 @@ angular.module('ionicParseApp.controllers', [])
     }
 })
 
+.controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform) {
+  var user = $scope.user;
+  $scope.contacts = user.attributes.contacts
+
+  // $scope.addContact = function(contact) {
+  //   $scope.contacts.push({contact});
+  // };
+
+  $scope.getContacts = function() {
+    $scope.phoneContacts = [];
+
+    function onSuccess(contacts) {
+      for (var i = 0; i < contacts.length; i++) {
+        var contact = contacts[i];
+        $scope.phoneContacts.push(contact);
+      }
+    };
+
+    function onError(contactError) {
+      alert(contactError);
+    };
+
+    var options = {};
+    options.multiple = true;
+
+    $cordovaContacts.find(options).then(onSuccess, onError);
+  };
+})
+
+.controller('HelpController', function($scope, $state, $rootScope, $ionicPlatform) {
+  var user = $scope.user;
+
+  $scope.requestHelp = function (helpData) {
+    var Help = Parse.Object.extend("Help");
+    var help = new Help();
+
+    help.save({issue: helpData.issue, level: helpData.level, user_id: user.id}, {
+      success: function(object) {
+        alert("yay! it worked");
+      }
+   });
+  }
+})
+
 .controller('LoginController', function($scope, $state, $rootScope, $ionicLoading) {
     $scope.user = {
         username: null,
