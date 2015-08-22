@@ -1,5 +1,37 @@
 <ion-view title='PocketHelp'>
   <ion-content has-header='true' has-tabs='true' padding='true'>
-    Home
+  <div class='list card' ng-repeat="request in help | orderBy: 'request.createdAt'">
+    <div class='item' style='padding-bottom: 0px; padding-top: 0px; background-color: #F9F9F9;' >
+      <div class='row'>
+        <div class='col col-60'>
+          <h2><b>
+            <a href='tel:{{request.attributes.phone}}' style='color: #11C1F3; text-decoration:none;'>
+              {{request.attributes.name}}
+            </a>
+          </b></h2>
+        </div>
+        <div class='col col-40'>
+          <p style='float: right;'>
+            <span style='float: right; color: #C50502;'>{{request.attributes.level}}</span><br>
+            <span style='float: right; color: #696969;'>{{request.createdAt | date : 'medium'}}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class='item'>
+      <div ng-if='request.attributes.latitude && request.attributes.longitude'>
+        {{request.attributes.latitude}}, {{request.attributes.longitude}}
+      </div>
+      <div ng-if='!request.attributes.latitude && !request.attributes.longitude'>
+        <p style='color: #696969;'>No Location Provided</p>
+      </div>
+    </div>
+    <div class='item' style='color: #696969;'>
+      <h2>Issue</h2>
+      <p>{{request.attributes.issue}}</p>
+    </div>
+  </div>
   </ion-content>
 </ion-view>
+
+

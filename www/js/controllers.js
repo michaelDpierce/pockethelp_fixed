@@ -36,10 +36,15 @@ angular.module('ionicParseApp.controllers', [])
 })
 
 .controller('HomeController', function($scope, $state, $rootScope) {
+  if (!$rootScope.isLoggedIn) {
+    $state.go('welcome');
+  }
 
-    if (!$rootScope.isLoggedIn) {
-        $state.go('welcome');
-    }
+  var Help = Parse.Object.extend("Help");
+  var help = new Parse.Query(Help);
+  help.find({success:function(requests){
+    $scope.help = requests
+  }});
 })
 
 .controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform) {
@@ -71,14 +76,29 @@ angular.module('ionicParseApp.controllers', [])
   };
 })
 
-.controller('HelpController', function($scope, $state, $rootScope, $ionicPlatform) {
+.controller('HelpController', function($scope, $state, $rootScope, $ionicPlatform, $cordovaGeolocation) {
   var user = $scope.user;
+
+  var lat = null;
+  var long = null;
+
+  $scope.currentLocation = function () {
+    var posOptions = {timeout: 10000, enableHighAccuracy: false};
+    $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+      .then(function (position) {
+        lat  = position.coords.latitude
+        long = position.coords.longitude
+      }, function(err) {
+        console.log('Error');
+      });
+  };
 
   $scope.requestHelp = function (helpData) {
     var Help = Parse.Object.extend("Help");
     var help = new Help();
 
-    help.save({issue: helpData.issue, level: helpData.level, user_id: user.id}, {
+    help.save({issue: helpData.issue, level: helpData.level, user_id: user.id, latitude: lat, longitude: long}, {
       success: function(object) {
         alert("yay! it worked");
       }
