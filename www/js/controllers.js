@@ -35,7 +35,9 @@ angular.module('ionicParseApp.controllers', [])
     }
 })
 
-.controller('HomeController', function($scope, $state, $rootScope) {
+.controller('HomeController', function($scope, $state, $rootScope, mapboxService) {
+  mapboxService.init({ accessToken: 'pk.eyJ1IjoibWF0Y2htaWtlMTMxMyIsImEiOiJlNWIzMWZkMWMzMTVhMTU4ZTU5Njk1YzllNmZlZjIzYiJ9.o7ugJ1UbmcfDmDrl8i7l4Q' });
+
   if (!$rootScope.isLoggedIn) {
     $state.go('welcome');
   }
@@ -45,6 +47,18 @@ angular.module('ionicParseApp.controllers', [])
   help.find({success:function(requests){
     $scope.help = requests
   }});
+
+  $scope.driveTo = function(lat, long) {
+    launchnavigator.navigate(
+      [lat, long],
+      null,
+      function(){
+        console.log("Plugin success");
+      },
+      function(error){
+        console.log("Plugin error: "+ error);
+      });
+    }
 })
 
 .controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform) {

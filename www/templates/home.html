@@ -20,7 +20,14 @@
     </div>
     <div class='item'>
       <div ng-if='request.attributes.latitude && request.attributes.longitude'>
-        {{request.attributes.latitude}}, {{request.attributes.longitude}}
+        <mapbox map-id='matchmike1313.n3e6clmp'
+                lat='{{request.attributes.latitude}}' lng='{{request.attributes.longitude}}' zoom='16'>
+          <marker lat='{{request.attributes.latitude}}' lng='{{request.attributes.longitude}}'><h1>My Location</h1></marker>
+        </mapbox>
+        <a href='#' style='color: #11C1F3; text-decoration:none;'
+           ng-click='driveTo(request.attributes.latitude, request.attributes.longitude)'>
+          Drive Here
+        </a>
       </div>
       <div ng-if='!request.attributes.latitude && !request.attributes.longitude'>
         <p style='color: #696969;'>No Location Provided</p>
@@ -33,5 +40,3 @@
   </div>
   </ion-content>
 </ion-view>
-
-
