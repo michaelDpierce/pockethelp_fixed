@@ -61,13 +61,43 @@ angular.module('ionicParseApp.controllers', [])
     }
 })
 
-.controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform) {
+.controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform, $cordovaSms) {
   var user = $scope.user;
   $scope.contacts = user.attributes.contacts
 
-  // $scope.addContact = function(contact) {
-  //   $scope.contacts.push({contact});
-  // };
+  angular.element(document).ready(function () {
+    getUsers();
+  });
+
+  $scope.sendSMS = function(contact) {
+    var recipient = contact.phoneNumbers[0].value;
+    $cordovaSms
+      .send(recipient, 'Join me on PocketHelp! You can download on the Apple Store here: and the Play Store here: .', {})
+      .then(function() {
+        console.log('Success');
+      }, function(error) {
+        console.log('Error');
+      });
+  }
+
+  getUsers = function() {
+    $scope.users = [];
+    var q2 = new Parse.Query(Parse.User);
+    q2.find({success:function(users){
+      _.forEach(users, function(user) {
+        $scope.users.push(user.attributes);
+      });
+      console.log($scope.users);
+      return $scope.users;
+    }});
+  }
+
+  // $scope.isUser = function (phone) {
+  //   formattedPhone = phone.replace(/\D/g,'');
+  //   userLookup = _.find($scope.users, { 'phone': formattedPhone});
+  //   if (userLookup.length > 0) { return true }
+  //   else { return false }
+  // }
 
   $scope.getContacts = function() {
     $scope.phoneContacts = [];
@@ -164,6 +194,10 @@ angular.module('ionicParseApp.controllers', [])
     $scope.forgot = function() {
         $state.go('app.forgot');
     };
+
+    $scope.signUp = function() {
+        $state.go('app.register');
+    };
 })
 
 .controller('ForgotPasswordController', function($scope, $state, $ionicLoading) {
@@ -210,6 +244,10 @@ angular.module('ionicParseApp.controllers', [])
 .controller('RegisterController', function($scope, $state, $ionicLoading, $rootScope) {
     $scope.user = {};
     $scope.error = {};
+
+    $scope.login = function() {
+        $state.go('app.login');
+    };
 
     $scope.register = function() {
 

@@ -3,10 +3,12 @@
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width'>
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
     <title>PocketHelp</title>
     <link href='lib/ionic/css/ionic.css' rel='stylesheet'>
     <link href='css/app.css' rel='stylesheet'>
     <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.css' rel='stylesheet' />
     <script src='lib/ionic/js/ionic.bundle.js'></script>
     <script src='lib/parse/parse.min.js'></script>
@@ -17,7 +19,7 @@
     <script src='js/controllers.js'></script>
   </head>
   <body ng-app='ionicParseApp'>
-    <ion-tabs class='tabs-royal'>
+    <ion-tabs class='tabs-royal' ng-show='isLoggedIn'>
       <ion-tab icon='ion-home' ui-sref='app.home'>
         <ion-nav-view name='home'></ion-nav-view>
       </ion-tab>
@@ -34,6 +36,7 @@
     <ion-nav-view></ion-nav-view>
   </body>
 </html>
+
 
 
 

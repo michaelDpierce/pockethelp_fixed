@@ -1,22 +1,16 @@
 <ion-view title='PocketHelp'>
   <ion-content has-header='true' has-tabs='true' padding='true'>
   <div class='list card' ng-repeat="request in help | orderBy: 'request.createdAt'">
-    <div class='item' style='padding-bottom: 0px; padding-top: 0px; background-color: #F9F9F9;' >
-      <div class='row'>
-        <div class='col col-60'>
-          <h2><b>
-            <a href='tel:{{request.attributes.phone}}' style='color: #11C1F3; text-decoration:none;'>
-              {{request.attributes.name}}
-            </a>
-          </b></h2>
-        </div>
-        <div class='col col-40'>
-          <p style='float: right;'>
-            <span style='float: right; color: #C50502;'>{{request.attributes.level}}</span><br>
-            <span style='float: right; color: #696969;'>{{request.createdAt | date : 'medium'}}</span>
-          </p>
-        </div>
-      </div>
+    <div class='item' style='padding-bottom: 10px; padding-top: 10px; background-color: #F9F9F9;' >
+      <h2>
+        <b>
+          <a href='tel:{{request.attributes.phone}}' style='color: #11C1F3; text-decoration:none;'>
+            {{request.attributes.name}}
+          </a>
+        </b>
+      </h2>
+      <p style='float: left; color: #C50502;'>{{request.attributes.level}}</p>
+      <p style='float: right; color: #696969;'>{{request.createdAt | date : 'medium'}}</p>
     </div>
     <div class='item'>
       <div ng-if='request.attributes.latitude && request.attributes.longitude'>
@@ -38,5 +32,6 @@
       <p>{{request.attributes.issue}}</p>
     </div>
   </div>
+  <br><br>
   </ion-content>
 </ion-view>
