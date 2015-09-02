@@ -61,9 +61,13 @@ angular.module('ionicParseApp.controllers', [])
     }
 })
 
-.controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform, $cordovaSms) {
+.controller('ContactsController', function($scope, $state, $rootScope, $cordovaContacts, $ionicPlatform, $cordovaSms, $window) {
   var user = $scope.user;
-  $scope.contacts = user.attributes.contacts
+
+  $scope.contacts = [
+    {id: 1, objectId: user.attributes.contactOne},
+    {id: 2, objectId: user.attributes.contactTwo},
+  ]
 
   angular.element(document).ready(function () {
     getUsers();
@@ -85,19 +89,141 @@ angular.module('ionicParseApp.controllers', [])
     var q2 = new Parse.Query(Parse.User);
     q2.find({success:function(users){
       _.forEach(users, function(user) {
-        $scope.users.push(user.attributes);
+        $scope.users.push({id: user.id, firstName: user.attributes.firstName, lastName: user.attributes.lastName, phone: user.attributes.phone});
       });
       console.log($scope.users);
       return $scope.users;
     }});
   }
 
-  // $scope.isUser = function (phone) {
-  //   formattedPhone = phone.replace(/\D/g,'');
-  //   userLookup = _.find($scope.users, { 'phone': formattedPhone});
-  //   if (userLookup.length > 0) { return true }
-  //   else { return false }
-  // }
+  $scope.userLookup = function (userId) {
+    userLookup = _.find($scope.users, { 'id': userId});
+    return userLookup.firstName + ' ' + userLookup.lastName
+  }
+
+  $scope.isUser = function (contact) {
+    if (contact.phoneNumbers[0].value) {
+      var phoneNumber = contact.phoneNumbers[0].value;
+      formattedPhone = phoneNumber.replace(/\D/g,'');
+      userLookup = _.find($scope.users, { 'phone': formattedPhone});
+      if (userLookup == undefined) { return false }
+      else { return true }
+    }
+    else {
+      return false
+    }
+  }
+
+  $scope.addPocketHelper = function (contact) {
+    var user = $scope.user;
+
+    var phoneNumber = contact.phoneNumbers[0].value;
+    formattedPhone = phoneNumber.replace(/\D/g,'');
+    userLookup = _.find($scope.users, { 'phone': formattedPhone});
+
+    if (!user.attributes.contactOne) {
+      user.set("contactOne",userLookup.id);
+      user.save()
+      .then(
+        function(user) {
+          return user.fetch();
+          Parse.User.logIn(user.email, user.password);
+          Parse.User.current().fetch()
+          $scope.contacts = [
+            {id: 1, objectId: user.attributes.contactOne},
+            {id: 2, objectId: user.attributes.contactTwo},
+          ]
+        }
+      )
+      .then(
+        function(user) {
+          console.log('User Updated', user);
+          $window.location.reload();
+        },
+        function(error) {
+          console.log('Something went wrong', error);
+        }
+      );
+    }
+    else if (!user.attributes.contactTwo) {
+      user.set("contactTwo",userLookup.id);
+      user.save()
+      .then(
+        function(user) {
+          return user.fetch();
+          Parse.User.logIn(user.email, user.password);
+          Parse.User.current().fetch()
+          $scope.contacts = [
+            {id: 1, objectId: user.attributes.contactOne},
+            {id: 2, objectId: user.attributes.contactTwo},
+          ]
+        }
+      )
+      .then(
+        function(user) {
+          console.log('User Updated', user);
+          $window.location.reload();
+        },
+        function(error) {
+          console.log('Something went wrong', error);
+        }
+      );
+    }
+    else {
+      alert('All slots are taken. Please purchase additional slots to add more PocketHelpers.');
+    }
+  }
+
+  $scope.removePocketHelper = function(contact) {
+    if (contact.id == 1) {
+      user.set("contactOne", '');
+      user.save()
+      .then(
+        function(user) {
+          return user.fetch();
+          Parse.User.logIn(user.email, user.password);
+          Parse.User.current().fetch()
+          $scope.contacts = [
+            {id: 1, objectId: user.attributes.contactOne},
+            {id: 2, objectId: user.attributes.contactTwo},
+          ]
+        }
+      )
+      .then(
+        function(user) {
+          console.log('User Updated', user);
+          $window.location.reload();
+        },
+        function(error) {
+          console.log('Something went wrong', error);
+        }
+      );
+    }
+    else if (contact.id == 2) {
+      user.set("contactTwo", '');
+      user.save()
+      .then(
+        function(user) {
+          return user.fetch();
+          Parse.User.logIn(user.email, user.password);
+          Parse.User.current().fetch()
+          $scope.contacts = [
+            {id: 1, objectId: user.attributes.contactOne},
+            {id: 2, objectId: user.attributes.contactTwo},
+          ]
+        }
+      )
+      .then(
+        function(user) {
+          console.log('User Updated', user);
+          $window.location.reload();
+        },
+        function(error) {
+          console.log('Something went wrong', error);
+        }
+      );
+    }
+  }
 
   $scope.getContacts = function() {
     $scope.phoneContacts = [];
@@ -105,7 +231,7 @@ angular.module('ionicParseApp.controllers', [])
     function onSuccess(contacts) {
       for (var i = 0; i < contacts.length; i++) {
         var contact = contacts[i];
-        $scope.phoneContacts.push(contact);
+        $scope.phoneContacts.push({name: contact.name.formatted, phoneNumbers: contact.phoneNumbers});
       }
     };
 
@@ -218,7 +344,6 @@ angular.module('ionicParseApp.controllers', [])
 
         Parse.User.requestPasswordReset($scope.user.email, {
             success: function() {
-                // TODO: show success
                 $ionicLoading.hide();
                 $scope.state.success = true;
                 $scope.$apply();
@@ -250,9 +375,6 @@ angular.module('ionicParseApp.controllers', [])
     };
 
     $scope.register = function() {
-
-        // TODO: add age verification step
-
         $scope.loading = $ionicLoading.show({
             content: 'Sending',
             animation: 'fade-in',

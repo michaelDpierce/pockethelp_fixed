@@ -1,16 +1,19 @@
 <ion-view title='PocketHelp'>
   <ion-content has-header='true' has-tabs='true' padding='true'>
     <h4>POCKET HELPERS</h4>
-    <div class='list'  ng-repeat='contacts in userData'>
-      <div class='item'>
-        {{contacts}}
-        <span style='float:right;'>{{$index + 1}} of {{contacts.length}} Slots Used</span>
+    <div class='list'  ng-repeat='contact in contacts track by contact.id'>
+      <div class='item' ng-if='contact.objectId'>
+        {{userLookup(contact.objectId)}}
+        <span style='float:right;'>{{contact.id}} of {{contacts.length}} Slots Used</span>
+        <br><br>
+        <button class='button button-stable' ng-click='removePocketHelper(contact)'>
+          Remove PocketHelper
+        </button>
+      </div>
+      <div class='item' ng-if='!contact.objectId'>
+        Open - Add PocketHelper
       </div>
     </div>
-    {{contacts}}
-    <button class='button button-stable' ng-click='getUsers()'>
-      Invite to PocketHelp
-    </button>
     <h4>ADD CONTACTS</h4>
     <div class='padding'>
       <button class='button button-block button-royal' ng-click='getContacts()' ng-hide='phoneContacts'>
@@ -18,12 +21,21 @@
       </button>
       <div class='list' ng-show='phoneContacts' ng-repeat='contact in phoneContacts'>
         <div class='item'>
-          {{ contact.name.formatted }}
-          <!-- {{isUser(contact)}} -->
-          <br><br>
-          <button class='button button-stable' ng-click='sendSMS(contact)'>
-            Invite to PocketHelp
-          </button>
+          {{contact.phoneNumbers}}
+          <div ng-if='isUser(contact)'>
+            {{contact.name}} <i class='fa fa-shield'></i><br>
+            <br><br>
+            <button class='button button-royal' ng-click='addPocketHelper(contact)'>
+              Add to PocketHelpers
+            </button>
+          </div>
+          <div ng-if='!isUser(contact)'>
+            {{contact.name}}
+            <br><br>
+            <button class='button button-stable' ng-click='sendSMS(contact)'>
+              Invite to PocketHelp
+            </button>
+          </div>
         </div>
       </div>
     </div>
